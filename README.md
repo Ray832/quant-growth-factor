@@ -298,6 +298,10 @@ E:\量化研报复现\
 ├─ output\                    结果（可再生，可删除）
 │   ├─ figures\  tables\  logs\  factors\
 │
+├─ platform\                  平台版（拷贝/克隆到 BigQuant 运行）
+│   ├─ bq_factor_lab.py       单文件流水线（local / dai 双模式）
+│   └─ sync.sh                平台同步脚本（git 不可用时用 tarball）
+│
 ├─ report\                    研报与汇报（最终交付）
 └─ .pylibs\                   工作区 Python 依赖（781 MB）
 ```
@@ -498,6 +502,33 @@ git ls-remote --heads origin   # 私有仓库会要求输入用户名 + PAT，�
 ```
 
 > 平台侧不需要代理（容器在海外，已验证 `curl -I https://github.com` 返回 200）。
+
+**平台报 `zsh: command not found: git`**：
+
+先确认是"没装"还是"PATH 丢了"：
+
+```bash
+echo $PATH
+ls -l /usr/bin/git /usr/local/bin/git
+/usr/bin/git --version
+echo $CONDA_DEFAULT_ENV
+```
+
+| 情况 | 处理 |
+|---|---|
+| `/usr/bin/git` 存在，但 `git` 找不到 | PATH 问题：`export PATH=/usr/bin:$PATH` |
+| 完全不存在 | `sudo apt-get install -y git`，或 `conda install -c conda-forge git` |
+| 没有 sudo / 装不上 | 用 `bash platform/sync.sh`，走 tarball，不需要 git |
+
+**根因**：平台容器是临时的，重启或切换运行环境会回到基础镜像，手动 `apt install` 的包会丢。
+所以不依赖 git 的同步脚本更稳：
+
+```bash
+bash platform/sync.sh
+# 优先 git pull；没有 git 就下载 main.tar.gz 覆盖代码
+```
+
+仓库是公开的，tarball 下载不需要任何认证。
 
 ---
 
