@@ -1,0 +1,31 @@
+# ---- 数据（体积大 + 平台授权，绝不入库）----
+bq_export_v41/
+data/
+*.csv.gz
+
+# ---- 研报原文（版权材料，不入库）----
+研报/
+docs/report_raw.txt
+
+# ---- 依赖与缓存 ----
+.pylibs/
+.cache/
+.backup/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# ---- 结果（可重跑，不入库）----
+output/
+report/*.docx
+report/*.pptx
+
+# ---- 编辑器 / 系统 ----
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# ---- 临时 ----
+scripts/_tmp/
+*.log

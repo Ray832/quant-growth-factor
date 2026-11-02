@@ -1,0 +1,14 @@
+# 统一换行符：本地 Windows 开发、平台 Linux 运行
+* text=auto eol=lf
+
+# 二进制
+*.png binary
+*.jpg binary
+*.docx binary
+*.pptx binary
+*.pdf binary
+
+# Python
+*.py text eol=lf
+*.md text eol=lf
+*.cmd text eol=crlf
