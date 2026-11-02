@@ -419,6 +419,13 @@ python platform/bq_factor_lab.py --source dai --start 2020-01-01 --end 2025-12-3
 python platform/bq_factor_lab.py --source local --data-dir /bq_export_v41 --sample 100
 ```
 
+**路径自动探测**：`--data-dir` 找不到时会自动搜索 `/bq_export_v41`、`~/bq_export_v41`、
+当前目录、`/home/aiuser` 下的 `panel_*.csv`，并打印实际使用的目录。
+
+**dai 模式按月压缩**：`--source dai` 按年查询、逐年压成月末再拼接，
+不会一次性载入 1,200 万行日频数据；同时会自动取停牌事件。
+代价是首次运行较慢（6 次年度查询）。
+
 ### 3.7 代码质量约定
 
 - 所有函数带 docstring，注明输入输出；

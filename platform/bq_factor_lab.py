@@ -84,14 +84,78 @@ def load_local(data_dir: str, years=None) -> pd.DataFrame:
     return pd.concat(frames, ignore_index=True)
 
 
+def resolve_data_dir(p: str) -> str:
+    """在常见位置寻找 bq_export_v41，避免路径写错就报错。"""
+    cands = [Path(p), Path("/bq_export_v41"),
+             Path.home() / "bq_export_v41",
+             Path.cwd() / "bq_export_v41",
+             Path("/home/aiuser/bq_export_v41")]
+    for c in cands:
+        try:
+            if c.is_dir() and list(c.glob("panel_*.csv")):
+                return str(c)
+        except OSError:
+            continue
+
+    for base in ("/home/aiuser", "/mnt", "/data"):
+        b = Path(base)
+        if not b.exists():
+            continue
+        hits = list(b.rglob("panel_2016.csv"))
+        if hits:
+            return str(hits[0].parent)
+
+    searched = ", ".join(str(c) for c in cands)
+    raise FileNotFoundError(
+        f"没找到 panel_*.csv。已搜索：{searched}\n"
+        "请用 --data-dir 指定实际目录，或改用 --source dai 直接从平台取数。"
+    )
+
+
+def _to_month_end(df: pd.DataFrame) -> pd.DataFrame:
+    """把一个年份的日频数据压成月末截面。"""
+    df = df.copy()
+    df["date"] = pd.to_datetime(df["date"])
+    days = pd.Series(df["date"].unique())
+    me = days.groupby(days.dt.to_period("M")).max()
+    return df[df["date"].isin(set(me.values))]
+
+
 def load_dai(start: str, end: str) -> pd.DataFrame:
+    """从平台取数：按年拉，逐年压成月末，避免一次性载入日频。"""
     import dai
-    sql = f"""
-    SELECT {', '.join(PANEL_COLS)}
-    FROM cn_stock_prefactors
-    WHERE date >= '{start}' AND date <= '{end}'
-    """
-    return dai.query(sql, filters={"date": [start, end]}).df()
+
+    s, e = pd.Timestamp(start), pd.Timestamp(end)
+    frames = []
+    for y in range(s.year, e.year + 1):
+        a = max(pd.Timestamp(f"{y}-01-01"), s).strftime("%Y-%m-%d")
+        b = min(pd.Timestamp(f"{y}-12-31"), e).strftime("%Y-%m-%d")
+        df = dai.query(
+            f"SELECT {', '.join(PANEL_COLS)} FROM cn_stock_prefactors "
+            f"WHERE date >= '{a}' AND date <= '{b}'",
+            filters={"date": [a, b]},
+        ).df()
+        if df is None or len(df) == 0:
+            continue
+        snap = _to_month_end(df)
+        print(f"      {y}: 日频 {len(df):,d} -> 月频 {len(snap):,d}")
+        frames.append(snap)
+    if not frames:
+        return pd.DataFrame(columns=PANEL_COLS)
+    return pd.concat(frames, ignore_index=True)
+
+
+def load_suspension_dai(start: str, end: str) -> pd.DataFrame:
+    """从平台取停牌事件（稀疏）。"""
+    import dai
+
+    sql = ("SELECT date, instrument FROM cn_stock_prefactors "
+           f"WHERE suspended = 1 AND date >= '{start}' AND date <= '{end}'")
+    df = dai.query(sql, filters={"date": [start, end]}).df()
+    if df is None or len(df) == 0:
+        return pd.DataFrame(columns=["date", "instrument"])
+    df["date"] = pd.to_datetime(df["date"])
+    return df
 
 
 def load_suspension(data_dir: str) -> pd.DataFrame:
@@ -370,11 +434,14 @@ def main():
 
     print(f"[1/6] 读取数据（{args.source}）")
     if args.source == "local":
-        raw = load_local(args.data_dir)
-        susp = load_suspension(args.data_dir)
+        data_dir = resolve_data_dir(args.data_dir)
+        print(f"      数据目录: {data_dir}")
+        raw = load_local(data_dir)
+        susp = load_suspension(data_dir)
     else:
         raw = load_dai(args.start, args.end)
-        susp = pd.DataFrame(columns=["date", "instrument"])
+        print("      读取停牌事件")
+        susp = load_suspension_dai(args.start, args.end)
     print(f"      原始 {len(raw):,d} 行，{raw['date'].nunique()} 个截面")
 
     print("[2/6] 过滤股票池")
