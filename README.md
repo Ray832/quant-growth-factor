@@ -412,22 +412,14 @@ df = pd.read_csv(f, usecols=COLS, dtype=dtype, parse_dates=["date"])
 E:\量化研报复现  ──push──►  私有仓库  ──clone/pull──►  /home/aiuser/work/<repo>
 ```
 
-**为什么可行**：平台是 Linux 容器 + 内嵌 web VSCode，自带 `git`；只要容器能访问 GitHub，
-整条链路就成立。
+**已验证的环境**（2026-11-02，平台实测）：
 
-**平台端前置检查**（在 VSCode 终端里跑三条）：
-
-```bash
-git --version
-curl -I https://github.com
-git ls-remote https://github.com/<user>/<repo>.git
-```
-
-| 结果 | 判断 | 对策 |
-|---|---|---|
-| 三条全通 | 可直接 clone | — |
-| curl 通、ls-remote 失败 | 认证/代理问题 | 用 PAT（Personal Access Token） |
-| 全都不通 | 容器不出网或 GitHub 被限 | 改用 Gitee，或上传 zip 解压 |
+| 项目 | 结果 |
+|---|---|
+| git | 2.52.0 |
+| GitHub 访问 | `curl -I https://github.com` → HTTP/2 200 |
+| matplotlib | 可用 |
+| 结论 | 链路成立，平台可直接 clone |
 
 **仓库设置**：
 
@@ -436,34 +428,56 @@ git ls-remote https://github.com/<user>/<repo>.git
 - `.gitattributes` 统一 LF，避免 Windows CRLF 弄坏 Linux 下的脚本；
 - 认证用 PAT（HTTPS），**不要把 token 写进代码、README 或提交历史**。
 
-**平台端操作**：
-
-```bash
-cd /home/aiuser/work
-git clone https://<token>@github.com/<user>/quant-growth-factor.git
-cd quant-growth-factor
-python platform/bq_factor_lab.py --source dai --start 2020-01-01
-```
-
-更新代码：`git pull`。平台不装本地 `.pylibs`，脚本只依赖平台自带的 pandas / numpy / scipy；
-数据不随仓库走，平台端用 `dai` 现取。
-
 **代码与数据的边界**：仓库里只有代码、文档、测试；数据本地一份、平台现取一份，
 两边都不入库。这样仓库体积 < 1 MB，clone 快，也不会泄露数据。
 
 **仓库现状**（2026-11-02 初始化）：
 
+- 地址：`https://github.com/Ray832/quant-growth-factor`（**私有**）
 - 22 个文件、约 0.1 MB；
 - 已忽略：`bq_export_v41/`、`研报/`、`docs/report_raw.txt`、`.pylibs/`、`.cache/`、`.backup/`、`output/`；
 - 研报原文与全文抽取不入库（版权 + 体积），本地保留。
 
-**首次推送**（仓库建好后执行一次）：
+**首次推送**（在本地终端执行，DSH 沙箱内无法访问 GitHub TLS）：
 
 ```bash
-git remote add origin https://github.com/<user>/<repo>.git
+git remote add origin https://github.com/Ray832/quant-growth-factor.git
 git branch -M main
 git push -u origin main
 ```
+
+**平台端 clone（私有仓库需认证）**：
+
+```bash
+cd /home/aiuser/work
+git clone https://<PAT>@github.com/Ray832/quant-growth-factor.git
+cd quant-growth-factor
+# 去掉 URL 里的 token，改用凭据存储
+git remote set-url origin https://github.com/Ray832/quant-growth-factor.git
+git config credential.helper store
+```
+
+- PAT 用 Fine-grained token，只给该仓库 **Contents: Read** 权限，设 30 天过期；
+- 平台只需读权限，**不需要写权限**；
+- 不要把 token 写进任何被提交的文件。
+
+**日常同步**：
+
+```bash
+# 本地
+git add -A && git commit -m "feat: ..." && git push
+# 平台
+git pull
+```
+
+**常见问题**：
+
+| 现象 | 原因 | 处理 |
+|---|---|---|
+| 浏览器打开仓库 404 | 私有仓库对未登录用户返回 404 | 正常，登录后可见 |
+| 本地 `git push` 报 `SEC_E_NO_CREDENTIALS` | DSH 沙箱限制 TLS | 在本机普通终端执行 push |
+| 平台 clone 提示认证 | 私有仓库 | 用 PAT |
+| `git pull` 每次要密码 | 未存凭据 | `git config credential.helper store` |
 
 ---
 
