@@ -1110,6 +1110,7 @@ Git 仓库已于 2026-11-02 初始化（单 commit，22 个文件，0.1 MB），
 | [docs/reports/P1_factor_panel.md](docs/reports/P1_factor_panel.md) | **P1 全样本**：因子面板 + IC + 5 层 |
 | [docs/reports/P2_full_sample.md](docs/reports/P2_full_sample.md) | **P2 全样本**：回归 + IC 衰减 + 10 层 + 分组 + 成本 |
 | [docs/reports/P3_robustness.md](docs/reports/P3_robustness.md) | **P3 全样本**：基准超额 + 真实换手 + FDR + 填 0 + 分时段 |
+| [docs/reports/P4_report_writing.md](docs/reports/P4_report_writing.md) | **P4**：25 页研报的结构、图表与深挖结论 |
 | [docs/data_audit.md](docs/data_audit.md) | 抓数前可行性论证 |
 | [docs/data_quality_v41.md](docs/data_quality_v41.md) | 抓数后质检 |
 | [docs/report_raw.txt](docs/report_raw.txt) | 研报全文 |
@@ -1123,7 +1124,7 @@ Git 仓库已于 2026-11-02 初始化（单 commit，22 个文件，0.1 MB），
 - [x] P3 稳健性：基准超额 / 真实换手 / FDR / 填 0 / 分时段（2026-11-02）
 - [x] 次日停牌口径接入（2026-11-02）
 - [x] 平台单文件脚本 + 一致性测试（2026-11-02）
-- [ ] P4 研报撰写
+- [x] P4 研报撰写（25 页，2026-11-03）
 - [ ] P5 汇报
 
 ### 11.4 变更记录
