@@ -777,6 +777,10 @@ G_3y = (X_t / X_{t-36})^(1/3) - 1
 | 因子检验 | 因子是否有效 | `scripts/` + `output/` |
 | 稳健性 | 结论是否依赖特定设定 | 同上 |
 
+> **冒烟测试只用 80 只股票、只回答"代码对不对"，其结果不是研究结论。**
+> 正式结论一律来自全样本（5,317 只、72 个月、44.6 万行），见 `docs/reports/P1_factor_panel.md`。
+> 冒烟测试的数字禁止写入研报、禁止用于汇报、禁止与原文对比。
+
 ### 7.2 冒烟测试（12 个用例）
 
 | # | 用例 | 验证 |
@@ -1077,7 +1081,9 @@ Git 仓库已于 2026-11-02 初始化（单 commit，22 个文件，0.1 MB），
 | 文档 | 内容 |
 |---|---|
 | [docs/data_guide.md](docs/data_guide.md) | 数据来源、字段字典、存储结构 |
-| [docs/smoke_test.md](docs/smoke_test.md) | 自检报告（12 用例） |
+| [docs/smoke_test.md](docs/smoke_test.md) | **冒烟测试**（仅验证代码，非结论） |
+| [docs/reports/P1_factor_panel.md](docs/reports/P1_factor_panel.md) | **P1 全样本**：因子面板 + IC + 5 层 |
+| [docs/reports/P2_full_sample.md](docs/reports/P2_full_sample.md) | **P2 全样本**：回归 + IC 衰减 + 10 层 + 分组 + 成本 |
 | [docs/data_audit.md](docs/data_audit.md) | 抓数前可行性论证 |
 | [docs/data_quality_v41.md](docs/data_quality_v41.md) | 抓数后质检 |
 | [docs/report_raw.txt](docs/report_raw.txt) | 研报全文 |
@@ -1087,8 +1093,8 @@ Git 仓库已于 2026-11-02 初始化（单 commit，22 个文件，0.1 MB），
 - [x] P0 环境与数据
 - [x] 代码骨架与冒烟测试
 - [x] P1 因子面板（全样本，2026-11-02）
-- [x] P2 IC 与分层（首轮，2026-11-02）
-- [ ] P3 回归与稳健性
+- [x] P2 全样本检验：回归 / IC 衰减 / 10 层 / 分组 / 成本（2026-11-02）
+- [ ] P3 稳健性补充：基准超额 / 真实换手 / FDR / 填 0 对照
 - [ ] P4 研报
 - [ ] P5 汇报
 
