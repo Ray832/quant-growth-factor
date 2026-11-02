@@ -516,7 +516,8 @@ echo $CONDA_DEFAULT_ENV
 
 | 情况 | 处理 |
 |---|---|
-| `/usr/bin/git` 存在，但 `git` 找不到 | PATH 问题：`export PATH=/usr/bin:$PATH` |
+| `/usr/bin/git` 存在，但 `git` 找不到 | 多半是 zsh 命令缓存或不同 shell 会话：`rehash`，或用绝对路径 `/usr/bin/git` |
+| PATH 里确实没有 `/usr/bin` | `export PATH=/usr/bin:$PATH`，并写入 `~/.zshrc` |
 | 完全不存在 | `sudo apt-get install -y git`，或 `conda install -c conda-forge git` |
 | 没有 sudo / 装不上 | 用 `bash platform/sync.sh`，走 tarball，不需要 git |
 
