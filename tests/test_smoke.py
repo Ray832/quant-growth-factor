@@ -116,6 +116,17 @@ def test_ic_series(sample):
     assert abs(stats["mean"]) < 0.3, "IC 均值异常，可能有数据泄露"
 
 
+def test_layer_direction(sample):
+    """回归守卫：layer 0 必须是因子最高组，否则多空方向会反。"""
+    f = sample["factors"]["ROE_G_ttm"]
+    lay = evaluate.assign_layers(f, sample["industry"], n=5)
+    means = []
+    for k in range(5):
+        vals = f.where(lay == k).stack().dropna()
+        means.append(vals.mean())
+    assert means[0] > means[-1], f"layer 0 不是最高因子组: {means}"
+
+
 def test_layers_and_long_short(sample):
     lay = evaluate.layer_returns(
         sample["factors"]["ROE_G_ttm"], sample["fwd"], sample["industry"], n=5

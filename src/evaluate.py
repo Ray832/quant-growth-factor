@@ -58,7 +58,8 @@ def assign_layers(factor: pd.DataFrame, industry: pd.DataFrame | None = None,
             continue
         groups = grp[m].fillna("NA")
         pct = f[m].groupby(groups).rank(pct=True, method="first")
-        layer = np.minimum((pct * n).astype(int), n - 1)
+        # layer 0 = 因子最高组，layer n-1 = 最低组
+        layer = (n - 1) - np.minimum((pct * n).astype(int), n - 1)
 
         s = pd.Series(np.nan, index=f.index)
         s.loc[m] = layer.values
