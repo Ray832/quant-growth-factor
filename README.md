@@ -451,6 +451,20 @@ python platform/bq_factor_lab.py --source dai --start 2020-01-01
 **代码与数据的边界**：仓库里只有代码、文档、测试；数据本地一份、平台现取一份，
 两边都不入库。这样仓库体积 < 1 MB，clone 快，也不会泄露数据。
 
+**仓库现状**（2026-11-02 初始化）：
+
+- 22 个文件、约 0.1 MB；
+- 已忽略：`bq_export_v41/`、`研报/`、`docs/report_raw.txt`、`.pylibs/`、`.cache/`、`.backup/`、`output/`；
+- 研报原文与全文抽取不入库（版权 + 体积），本地保留。
+
+**首次推送**（仓库建好后执行一次）：
+
+```bash
+git remote add origin https://github.com/<user>/<repo>.git
+git branch -M main
+git push -u origin main
+```
+
 ---
 
 ## 4. 数据说明
@@ -933,6 +947,7 @@ r_{i,t+1} = Σ 行业哑变量 + β · f_{i,t} + ε
 | `.backup/` 目录 | 本地改坏了，秒级恢复（离线） | 每次动 `src/` 前 |
 | Git + GitHub | 跨机器同步、历史版本、平台发布 | 每个阶段结束 commit + push |
 
+Git 仓库已于 2026-11-02 初始化（单 commit，22 个文件，0.1 MB），详见 3.8。
 两者并存，不互相替代。
 
 ### 9.5 目录卫生
