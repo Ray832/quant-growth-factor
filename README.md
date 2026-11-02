@@ -1084,6 +1084,7 @@ Git 仓库已于 2026-11-02 初始化（单 commit，22 个文件，0.1 MB），
 | [docs/smoke_test.md](docs/smoke_test.md) | **冒烟测试**（仅验证代码，非结论） |
 | [docs/reports/P1_factor_panel.md](docs/reports/P1_factor_panel.md) | **P1 全样本**：因子面板 + IC + 5 层 |
 | [docs/reports/P2_full_sample.md](docs/reports/P2_full_sample.md) | **P2 全样本**：回归 + IC 衰减 + 10 层 + 分组 + 成本 |
+| [docs/reports/P3_robustness.md](docs/reports/P3_robustness.md) | **P3 全样本**：基准超额 + 真实换手 + FDR + 填 0 + 分时段 |
 | [docs/data_audit.md](docs/data_audit.md) | 抓数前可行性论证 |
 | [docs/data_quality_v41.md](docs/data_quality_v41.md) | 抓数后质检 |
 | [docs/report_raw.txt](docs/report_raw.txt) | 研报全文 |
@@ -1094,7 +1095,8 @@ Git 仓库已于 2026-11-02 初始化（单 commit，22 个文件，0.1 MB），
 - [x] 代码骨架与冒烟测试
 - [x] P1 因子面板（全样本，2026-11-02）
 - [x] P2 全样本检验：回归 / IC 衰减 / 10 层 / 分组 / 成本（2026-11-02）
-- [ ] P3 稳健性补充：基准超额 / 真实换手 / FDR / 填 0 对照
+- [x] P3 稳健性：基准超额 / 真实换手 / FDR / 填 0 / 分时段（2026-11-02）
+- [ ] P4 研报撰写
 - [ ] P4 研报
 - [ ] P5 汇报
 
