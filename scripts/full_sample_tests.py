@@ -97,6 +97,7 @@ def main():
 
     raw = data.load_panel()
     pool = data.filter_pool(raw)
+    pool = data.apply_next_day_suspension(pool)
     wide = data.to_wide(pool)
     ind = wide["sw2021_level1_name"]
     close, mv = wide["close"], wide["float_market_cap"]

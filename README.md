@@ -94,7 +94,7 @@
 | 结果表 | `output/tables/*.csv` | ⏳ |
 | 研报 | `report/成长因子复现报告.docx`（含"与原文对话"章节） | ⏳ |
 | 汇报 | `report/汇报.pptx` | ⏳ |
-| 平台版脚本 | `platform/bq_factor_lab.py`（单文件，可拷到 BigQuant） | ⏳ |
+| 平台版脚本 | `platform/bq_factor_lab.py`（单文件，可拷到 BigQuant） | ✅ |
 | 备份脚本 | `scripts/backup.py` | ✅ |
 
 ### 1.5 研究定位与结果中立原则
@@ -395,11 +395,29 @@ df = pd.read_csv(f, usecols=COLS, dtype=dtype, parse_dates=["date"])
 | 输出 | `out/*.csv` + `out/*.png`，可直接下载 |
 | 版本兼容 | 不用 pandas 3.x 新 API；平台是 Python 3.11 + pandas 2.2 |
 
-**一致性校验**：同一批小样本，`src/` 与 `platform/` 两条路径结果必须逐格一致（容差 1e-10），
-由 `tests/test_platform_parity.py` 守护。
+**状态：已完成并验证（2026-11-02）**
 
-**发布方式**：平台 Notebook 中执行 `!python bq_factor_lab.py --source dai --start 2020-01-01`，
-或直接粘贴脚本内容运行。
+- 本地全样本跑通（5,317 只 / 72 月），IC 与 `src/` 结果**逐格一致（max diff = 0）**；
+- 15 个测试通过，其中 `tests/test_platform_parity.py` 守护两条路径的因子公式与 IC。
+
+**平台运行方式**（数据文件在 `/bq_export_v41/` 时）：
+
+```bash
+python platform/bq_factor_lab.py \
+  --source local --data-dir /bq_export_v41 --out-dir ./out
+```
+
+没有 CSV 时改用平台查询：
+
+```bash
+python platform/bq_factor_lab.py --source dai --start 2020-01-01 --end 2025-12-31
+```
+
+快速验证（100 只股票，约 10 秒）：
+
+```bash
+python platform/bq_factor_lab.py --source local --data-dir /bq_export_v41 --sample 100
+```
 
 ### 3.7 代码质量约定
 
@@ -1096,8 +1114,9 @@ Git 仓库已于 2026-11-02 初始化（单 commit，22 个文件，0.1 MB），
 - [x] P1 因子面板（全样本，2026-11-02）
 - [x] P2 全样本检验：回归 / IC 衰减 / 10 层 / 分组 / 成本（2026-11-02）
 - [x] P3 稳健性：基准超额 / 真实换手 / FDR / 填 0 / 分时段（2026-11-02）
+- [x] 次日停牌口径接入（2026-11-02）
+- [x] 平台单文件脚本 + 一致性测试（2026-11-02）
 - [ ] P4 研报撰写
-- [ ] P4 研报
 - [ ] P5 汇报
 
 ### 11.4 变更记录

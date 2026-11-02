@@ -24,6 +24,7 @@ def sample():
     """构建一次，全测试复用。"""
     raw = data.load_panel()
     pool = data.filter_pool(raw)
+    pool = data.apply_next_day_suspension(pool)
 
     # 选 2020 年后数据最完整的 80 只，保证小样本也有足够截面
     recent = pool[pool["date"] >= EVAL_START]

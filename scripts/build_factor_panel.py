@@ -44,7 +44,8 @@ def main():
     log(f"读入 {len(raw):,d} 行，{raw['date'].nunique()} 个截面", lines)
 
     pool = data.filter_pool(raw)
-    log(f"股票池过滤后 {len(pool):,d} 行，{pool['instrument'].nunique():,d} 只", lines)
+    pool = data.apply_next_day_suspension(pool)
+    log(f"股票池过滤后 {len(pool):,d} 行，{pool['instrument'].nunique():,d} 只（含次日停牌剔除）", lines)
 
     wide = data.to_wide(pool)
     ind = wide["sw2021_level1_name"]

@@ -67,3 +67,52 @@ def load_index(code: str = "000300") -> pd.DataFrame:
     path = config.DATA_DIR / f"index_{code}_monthly.csv"
     df = pd.read_csv(path, parse_dates=["date"])
     return df.sort_values("date").reset_index(drop=True)
+
+
+def load_suspension() -> pd.DataFrame:
+    """停牌事件（date, instrument）。"""
+    path = config.DATA_DIR / "suspension_events.csv"
+    return pd.read_csv(path, parse_dates=["date"])
+
+
+def _calendar_hint() -> pd.DatetimeIndex:
+    """用停牌/涨跌停事件的日期并集近似交易日历。
+
+    事件覆盖了大量交易日；某日若有股票停牌或涨跌停，该日必然在并集中。
+    对"判断次日是否停牌"来说，只要次日有任意股票停牌，该日就能被识别。
+    """
+    parts = [load_suspension()["date"]]
+    limit_path = config.DATA_DIR / "limit_events_valid.csv"
+    if limit_path.exists():
+        parts.append(pd.read_csv(limit_path, usecols=["date"], parse_dates=["date"])["date"])
+    for f in sorted(config.DATA_DIR.glob("panel_*.csv")):
+        parts.append(pd.read_csv(f, usecols=["date"], parse_dates=["date"])["date"])
+    return pd.DatetimeIndex(sorted(set(pd.concat(parts).unique())))
+
+
+def apply_next_day_suspension(pool: pd.DataFrame, max_gap_days: int = 5) -> pd.DataFrame:
+    """剔除"截面期下一交易日停牌"的股票（研报口径）。
+
+    次日由事件日期并集推断：若某日是下一交易日且当天有股票停牌，该日必在并集中。
+    若下一交易日没有任何停牌，则无需剔除。
+    """
+    susp = load_suspension()
+    by_date = susp.groupby("date")["instrument"].apply(set).to_dict()
+    cal = _calendar_hint()
+    dates = pd.DatetimeIndex(sorted(pool["date"].unique()))
+
+    drop = set()
+    for d in dates:
+        later = cal[cal > d]
+        if len(later) == 0:
+            continue
+        nd = later[0]
+        if (nd - d).days > max_gap_days:
+            continue
+        for inst in by_date.get(nd, ()):  # 次日无停牌时为空集，不会误删
+            drop.add((d, inst))
+
+    if not drop:
+        return pool
+    keys = pd.Series(list(zip(pool["date"], pool["instrument"])), index=pool.index)
+    return pool[~keys.isin(drop)]
