@@ -474,10 +474,30 @@ git pull
 
 | 现象 | 原因 | 处理 |
 |---|---|---|
+| `Failed to connect to github.com port 443` | git 不读系统代理，直连被墙 | 给 git 配代理，见下方 |
 | 浏览器打开仓库 404 | 私有仓库对未登录用户返回 404 | 正常，登录后可见 |
 | 本地 `git push` 报 `SEC_E_NO_CREDENTIALS` | DSH 沙箱限制 TLS | 在本机普通终端执行 push |
 | 平台 clone 提示认证 | 私有仓库 | 用 PAT |
 | `git pull` 每次要密码 | 未存凭据 | `git config credential.helper store` |
+
+**本地代理配置**（本机系统代理为 `127.0.0.1:7897`，git 需单独指定）：
+
+```powershell
+cd E:\量化研报复现
+git config --local http.proxy  http://127.0.0.1:7897
+git config --local https.proxy http://127.0.0.1:7897
+
+# 若仍报 schannel/证书类错误，换 OpenSSL 后端
+git config --global http.sslBackend openssl
+```
+
+验证：
+
+```powershell
+git ls-remote --heads origin   # 私有仓库会要求输入用户名 + PAT，能弹认证即网络通
+```
+
+> 平台侧不需要代理（容器在海外，已验证 `curl -I https://github.com` 返回 200）。
 
 ---
 
