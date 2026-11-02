@@ -29,3 +29,6 @@ Thumbs.db
 # ---- 临时 ----
 scripts/_tmp/
 *.log
+
+# ---- Notebook 产物 ----
+out_notebook/

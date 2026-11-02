@@ -400,6 +400,14 @@ df = pd.read_csv(f, usecols=COLS, dtype=dtype, parse_dates=["date"])
 - 本地全样本跑通（5,317 只 / 72 月），IC 与 `src/` 结果**逐格一致（max diff = 0）**；
 - 15 个测试通过，其中 `tests/test_platform_parity.py` 守护两条路径的因子公式与 IC。
 
+**Notebook 版**（BigQuant 演示用）：
+
+- 文件：`notebook/成长因子测试.ipynb`（31 个单元，15 个代码块）
+- 直接 Run All；优先读 `/bq_export_v41`，缺失自动转 `dai`
+- 自带结果自检单元：12 个因子 IC 与本地基准比对，全部 PASS 才算一致
+- 末尾有“结果总览”单元，读取全部 CSV/PNG 并可视化
+- 生成脚本：`python scripts/build_notebook.py`（`--run` 可在本地顺序执行校验）
+
 **平台运行方式**（数据文件在 `/bq_export_v41/` 时）：
 
 ```bash
@@ -1126,6 +1134,7 @@ Git 仓库已于 2026-11-02 初始化（单 commit，22 个文件，0.1 MB），
 - [x] 平台单文件脚本 + 一致性测试（2026-11-02）
 - [x] P4 研报撰写（25 页，2026-11-03）
 - [ ] P5 汇报
+- [x] Notebook 版（2026-11-03）
 
 ### 11.4 变更记录
 
