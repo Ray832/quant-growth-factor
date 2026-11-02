@@ -423,61 +423,61 @@ E:\量化研报复现  ──push──►  私有仓库  ──clone/pull──
 
 **仓库设置**：
 
-- **必须私有**：数据来自 BigQuant，公开仓库有授权风险；
+- **公开仓库**（2026-11-02 起）：clone 免认证，但任何人可见 → 绝不提交 token、密钥、数据；
 - `.gitignore` 已排除：数据、`.pylibs`、`.cache`、`.backup`、`output`、缓存；
 - `.gitattributes` 统一 LF，避免 Windows CRLF 弄坏 Linux 下的脚本；
-- 认证用 PAT（HTTPS），**不要把 token 写进代码、README 或提交历史**。
+- 研报原文与全文抽取不入库（版权 + 体积）。
 
 **代码与数据的边界**：仓库里只有代码、文档、测试；数据本地一份、平台现取一份，
 两边都不入库。这样仓库体积 < 1 MB，clone 快，也不会泄露数据。
 
-**仓库现状**（2026-11-02 初始化）：
+**仓库现状**（2026-11-02）：
 
-- 地址：`https://github.com/Ray832/quant-growth-factor`（**私有**）
+- 地址：`https://github.com/Ray832/quant-growth-factor`（**公开**）
 - 22 个文件、约 0.1 MB；
-- 已忽略：`bq_export_v41/`、`研报/`、`docs/report_raw.txt`、`.pylibs/`、`.cache/`、`.backup/`、`output/`；
-- 研报原文与全文抽取不入库（版权 + 体积），本地保留。
+- 已忽略：`bq_export_v41/`、`研报/`、`docs/report_raw.txt`、`.pylibs/`、`.cache/`、`.backup/`、`output/`。
 
-**首次推送**（在本地终端执行，DSH 沙箱内无法访问 GitHub TLS）：
-
-```bash
-git remote add origin https://github.com/Ray832/quant-growth-factor.git
-git branch -M main
-git push -u origin main
-```
-
-**平台端 clone（私有仓库需认证）**：
+**平台端 clone（公开仓库，免认证）**：
 
 ```bash
 cd /home/aiuser/work
-git clone https://<PAT>@github.com/Ray832/quant-growth-factor.git
+git clone https://github.com/Ray832/quant-growth-factor.git
 cd quant-growth-factor
-# 去掉 URL 里的 token，改用凭据存储
-git remote set-url origin https://github.com/Ray832/quant-growth-factor.git
-git config credential.helper store
+git log --oneline -3
 ```
 
-- PAT 用 Fine-grained token，只给该仓库 **Contents: Read** 权限，设 30 天过期；
-- 平台只需读权限，**不需要写权限**；
-- 不要把 token 写进任何被提交的文件。
+若将来把仓库改回私有：用 `https://<PAT>@github.com/...` clone，再
+`git remote set-url origin https://github.com/...` 去掉 token，
+`git config credential.helper store` 记住凭据。
 
-**日常同步**：
+**日常同步（单向：本地 → GitHub → 平台）**：
 
 ```bash
-# 本地
-git add -A && git commit -m "feat: ..." && git push
-# 平台
-git pull
+# 本地：改完代码
+cd E:\量化研报复现
+git add -A
+git commit -m "feat: 新增 XX"
+git push
+
+# 平台：拉取
+cd ~/work/quant-growth-factor
+git pull --ff-only
 ```
+
+**三条同步纪律**：
+
+1. **平台只读**：所有修改在本地做，平台只 pull、不 commit、不 push；
+2. **先提交再跑**：平台跑出的结果若与本地不符，先确认 `git log` 一致；
+3. **工作区重置**：平台若清空，重新 clone 即可（仓库里没有数据，几分钟恢复）。
 
 **常见问题**：
 
 | 现象 | 原因 | 处理 |
 |---|---|---|
 | `Failed to connect to github.com port 443` | git 不读系统代理，直连被墙 | 给 git 配代理，见下方 |
-| 浏览器打开仓库 404 | 私有仓库对未登录用户返回 404 | 正常，登录后可见 |
+| 浏览器打开仓库 404 | 仓库不存在或已改私有 | 确认地址 / 登录后查看 |
 | 本地 `git push` 报 `SEC_E_NO_CREDENTIALS` | DSH 沙箱限制 TLS | 在本机普通终端执行 push |
-| 平台 clone 提示认证 | 私有仓库 | 用 PAT |
+| 平台 clone 提示认证 | 仓库已转为私有 | 用 PAT |
 | `git pull` 每次要密码 | 未存凭据 | `git config credential.helper store` |
 
 **本地代理配置**（本机系统代理为 `127.0.0.1:7897`，git 需单独指定）：
