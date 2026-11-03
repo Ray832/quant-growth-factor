@@ -354,7 +354,7 @@ def perf_stats(r):
     ann = nav.iloc[-1] ** (12 / len(r)) - 1
     vol = r.std() * np.sqrt(12)
     return {"ann_return": ann, "ann_vol": vol,
-            "sharpe": ann / vol if vol else np.nan,
+            "sharpe": (r.mean() * 12) / vol if vol else np.nan,
             "max_drawdown": (nav / nav.cummax() - 1).min(),
             "win_rate": (r > 0).mean(), "n": len(r)}
 
