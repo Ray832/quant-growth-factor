@@ -12,6 +12,11 @@
 > **口径更新（2026-11-02）**：已接入"截面期下一交易日停牌"剔除（341 行，占 0.08%），
 > 三套结果全部重跑。IC 最大变化 0.00017、分层 0.00095、回归 t 0.02，结论不变；
 > 本报告表格为接入前数值，四舍五入后一致，**以 `output/tables/` 为准**。
+>
+> ⚠️ **IC 口径警告（2026-11-03）**：本报告的 IC **只做了行业中性，缺少原文要求的市值中性**，
+> 因此这些数值（如 ROE_G_q 1.34%）**不符合研报口径**，仅作为 P1 阶段记录。
+> 正式 IC 以 P2 的 `output/tables/fdr_summary.csv`（行业 + 市值中性）为准（ROE_G_q 1.84%）。
+> 两套口径的差异：IC 均值最大 0.0111、平均 0.0054。
 
 ---
 
@@ -135,6 +140,10 @@
 2. **行业中性**：减去同行业均值；
 3. **标准化**：z-score。
 
+> 注意：P1 阶段**没有做市值中性**。原文 IC 要求"对市值因子及行业因子做线性回归取残差"，
+> 从 P2 起才补齐（对行业哑变量 + ln 流通市值回归取残差）。因此本报告的 IC 与分层，
+> 与最终的 `fdr_summary.csv`、`report_layer.csv` 存在系统性差异。
+
 ### 3.3 下月收益
 
 ```python
@@ -203,8 +212,8 @@ IC_t = corr_rank(f_{i,t}, r_{i,t+1})
 | 路径 | 内容 | 大小 |
 |---|---|---|
 | `output/factors/<因子>.csv.gz` | 12 个因子宽表（date × instrument，原始值） | 26 MB |
-| `output/tables/ic_summary.csv` | IC 汇总（12 行） | 1.4 KB |
-| `output/tables/ic_series.csv` | IC 时间序列（71 行 × 12 因子） | 18 KB |
+| `output/tables/ic_summary_industry_only.csv` | IC 汇总（仅行业中性，12 行） | 1.4 KB |
+| `output/tables/ic_series_industry_only.csv` | IC 时间序列（仅行业中性，71 行 × 12 因子） | 18 KB |
 | `output/tables/layer_summary.csv` | 分层汇总（12 行） | 2.1 KB |
 | `output/logs/run_*_p1_factor_panel.md` | 运行日志 | 0.9 KB |
 

@@ -3,8 +3,8 @@
 
 输出：
     output/factors/<factor>.csv.gz      12 个因子（宽表，原始值）
-    output/tables/ic_series.csv         IC 时间序列（date × factor）
-    output/tables/ic_summary.csv        IC 汇总（均值/标准差/IR/胜率）
+    output/tables/ic_series_industry_only.csv   IC 时间序列（仅行业中性，P1 阶段）
+    output/tables/ic_summary_industry_only.csv  IC 汇总（仅行业中性，P1 阶段）
     output/tables/layer_summary.csv     5 层回测汇总
     output/logs/run_*.md                运行日志
 
@@ -106,9 +106,9 @@ def main():
             f"多空年化={p_ls.get('ann_return', float('nan')):+.1%}", lines)
 
     ic_tbl = pd.DataFrame(ic_rows)
-    ic_tbl.to_csv(out_t / "ic_summary.csv", index=False, encoding="utf-8-sig")
+    ic_tbl.to_csv(out_t / "ic_summary_industry_only.csv", index=False, encoding="utf-8-sig")
 
-    pd.DataFrame(ic_all).to_csv(out_t / "ic_series.csv", encoding="utf-8-sig",
+    pd.DataFrame(ic_all).to_csv(out_t / "ic_series_industry_only.csv", encoding="utf-8-sig",
                                 index_label="date")
 
     lay_tbl = pd.DataFrame(layer_rows)
