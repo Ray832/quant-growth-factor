@@ -19,7 +19,7 @@
 | 当季（q）因子仍能排序 | ROE_G_q 的 IC 1.84%、五层单调性 0.9；Profit_G_q 1.55%、单调性 1.0 |
 | 但强度明显衰减 | 原文 IC 约 2%、多空 6%、收益 t 值 2.6–3.5；本文 IC 1.0%–1.8%、多空 2.5%–5.9%、收益 t 0.8–1.7 |
 | 三年复合因子反向 | Profit_G_3y 的 IC -0.79%，最高增长组事后 12 个月收益比最低组低约 5–6 个百分点 |
-| 因子高度依赖年景 | 2020 年 ROE_G_q 的 IC +4.74%、2024 年 +3.57%；2021 年 -1.01%、2023 年 +0.46% |
+| 因子高度依赖年景 | 2020 年 ROE_G_q 的 IC +4.53%、2024 年 +3.74%；2021 年 -0.20%、2023 年 +1.04% |
 | 扣费后仍有微弱 alpha | 真实换手 8%–24%，扣双边千三后当季多空 2.6%–5.3%，但信息比率仅 0.35–0.54 |
 | 多重检验后仅一个显著 | BH-FDR 校正后只有 `OCF_G_q` 通过 5%（p_adj = 0.0009） |
 
@@ -405,6 +405,7 @@ python platform/bq_factor_lab.py \
 | [docs/reports/P2_full_sample.md](docs/reports/P2_full_sample.md) | 回归、衰减、10 层、分组 |
 | [docs/reports/P3_robustness.md](docs/reports/P3_robustness.md) | 超额、换手、FDR、填 0 |
 | [docs/reports/P4_report_writing.md](docs/reports/P4_report_writing.md) | 研报结构与深挖结论 |
+| [docs/reports/汇报讲稿_20分钟.md](docs/reports/汇报讲稿_20分钟.md) | 20 分钟课堂讲稿 + 18 个评委问答 |
 | [report/成长因子复现报告.pdf](report/成长因子复现报告.pdf) | 25 页完整研报 |
 | [report/成长因子复现汇报.pdf](report/成长因子复现汇报.pdf) | 14 页汇报材料 |
 
